@@ -1,0 +1,461 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Canvas Photo Filter</title>
+<link href="css/base.css" rel="stylesheet" type="text/css" />
+<link href="css/common.css" rel="stylesheet" type="text/css" />
+<script src="js/jquery-2.1.0.min.js"></script>
+<style>
+
+
+#canvas{ position:relative; display:block; border:1px solid #ccc; margin:10px auto;}
+#pic{ position:relative; width:1000px; margin:10px auto;}
+#pic img{ display:block;}
+.btns{ position:relative; width:1000px; margin:10px auto;}
+.btns button{ cursor:pointer; margin-bottom: 5px;}
+    
+    
+    
+.btn_com{
+	display:inline-block;
+    height: 34px;
+	padding:0 25px;
+    border-radius:5px;
+    line-height: 34px;
+    box-sizing:border-box;
+    text-align: center;
+    border:0;
+    color: #fff;
+    background: #24aa98;
+    font-size: 14px;
+}
+.btn_com:active{
+    background:#2ec5b1;
+}
+.btn_com[disabled]{
+    background: #98b2af;
+    color: #9dcbc5;
+}
+
+.btn_com_line{
+	width:100%;
+}
+
+.btn_left{ float:left; width:50%; margin-right:5px;}
+    
+    
+@media screen and (max-width:600px){
+    #canvas{width:100%; margin: 0; box-sizing: border-box;}
+    #pic{ width:100%; margin: 0;}
+    .btns{width:auto;}
+    
+}
+    
+    
+</style>
+</head>
+
+<body>
+
+
+<canvas id="canvas" width="1000" height="600"></canvas>
+<div class="btns"><input type="file" onChange="imgLeadIn(this)" /></div>
+<div class="btns">
+	<button class="btn_com" type="button" onclick="picFilter.resetImg()">恢复原图</button>
+    <button class="btn_com" type="button" onclick="picFilter.toBlackWhite()">黑白</button>
+    <button class="btn_com" type="button" onClick="picFilter.oldStyle()">复古</button>
+    <button class="btn_com" type="button" onClick="picFilter.lightUp()">变亮&uarr;</button>
+    <button class="btn_com" type="button" onClick="picFilter.lightDown()">变暗&darr;</button>
+    <button class="btn_com" type="button" onclick="picFilter.invert()">反色</button>
+    <button class="btn_com" type="button" onClick="picFilter.filterBlur()">平均模糊</button>
+    <button class="btn_com" type="button" onClick="picFilter.gaussianBlur()">高斯模糊</button>
+    <button class="btn_com" type="button" onClick="picFilter.saveToImg()">生成图片文件</button>
+</div>
+<div class="pic" id="pic">
+	
+</div>
+
+<script type="text/javascript">
+function imgLeadIn(target){
+	//不能直接使用URL,因为url是假的
+	//var url = target.value;
+	//picFilter.leadInImg(url);
+	picFilter.leadInImg(target.files);
+	
+}
+
+var picFilter = (function(){
+	var canvas, ctx, width, height, originImg, originWidth, originHeight, image;
+	
+	function init(){
+		canvas = document.getElementById("canvas");
+		ctx = canvas.getContext("2d");
+		originWidth = width = canvas.width;
+		originHeight = height = canvas.height;
+	}
+	
+	function drawImg(img){
+		//调整图片的大小，以适应画布
+		width = originWidth;
+		height = originHeight;
+		var imgDrawWidth, imgDrawHeight;
+		if(img.width>width){
+			height = width*img.height/img.width;
+			canvas.height = height;
+			canvas.width = width;
+		}else{
+			width = img.width;
+			height = img.height;
+			canvas.width = width;
+			canvas.height = height;
+		}
+		ctx.clearRect(0, 0, width, height);
+		ctx.drawImage(img,0,0,img.width,img.height,0,0,width,height);
+		
+	}
+	
+	//图片导入
+	function _leadInImg(files){
+		var reader = new FileReader();
+		image = new Image();
+		reader.onload = function(event){
+			image.src = event.target.result;
+			originImg = event.target.result;
+			drawImg(image);
+		}
+		reader.readAsDataURL(files[0]);
+		
+	}
+	this.leadInImg = _leadInImg;
+	
+	function _toBlackWhite(){
+		var imageData = ctx.getImageData(0, 0, width, height);
+		var data = imageData.data;//获取到有imageData并不是存图片data的，而是包含了data，同时还要包含其它描述图片的属性如width,height。
+		var r,g,b;
+		for(var i=0; i<data.length; i+=4){
+			  r = data[i];
+			  g = data[i + 1];
+			  b = data[i + 2];
+			  data[i] = data[i + 1] = data[i + 2] = (r+g+b)/3;
+		}
+		ctx.putImageData(imageData,0,0);
+	}
+	this.toBlackWhite = _toBlackWhite;
+	
+	function _resetImg(){
+		image.src = originImg;
+		drawImg(image);
+	}
+	this.resetImg = _resetImg;
+	
+	function _toBlackWhite(){
+		var imageData = ctx.getImageData(0, 0, width, height);
+		var data = imageData.data;//获取到有imageData并不是存图片data的，而是包含了data，同时还要包含其它描述图片的属性如width,height。
+		var r,g,b;
+		for(var i=0; i<data.length; i+=4){
+			  r = data[i];
+			  g = data[i + 1];
+			  b = data[i + 2];
+			  data[i] = data[i + 1] = data[i + 2] = (r+g+b)/3;
+		}
+		ctx.putImageData(imageData,0,0);
+	}
+	this.toBlackWhite = _toBlackWhite;
+	
+	function _filterBlur(){
+		var imageData = ctx.getImageData(0, 0, width, height);
+		var data = imageData.data;
+		var oldData = new Array(data.length);
+		for(var i=0; i<data.length; i++){
+			oldData[i] = data[i];
+		}
+		var r,g,b;
+		var dotLeftTop, dotCenterTop, dotRightTop, dotLeftCenter, dotRightCenter, dotLeftBottom, dotCenterBottom, dotRightBottom;
+		var dotMax = data.length-4;
+		for(var i=0; i<data.length; i+=4){
+			//r = data[i];
+			//g = data[i + 1];
+			//b = data[i + 2];
+			//data[i] = data[i + 1] = data[i + 2] = (r+g+b)/3;
+			//取到相邻的点，平均rgba值
+			//取到左上点
+			dotLeftTop = ((i/4)-width-1)*4;
+			if(dotLeftTop<0){
+				dotLeftTop = i;
+			}
+			dotCenterTop = ((i/4)-width)*4;
+			if(dotCenterTop<0){
+				dotCenterTop = i;
+			}
+			dotRightTop = ((i/4)-width+1)*4;
+			if(dotRightTop<0){
+				dotRightTop = i;
+			}
+			
+			dotLeftCenter = ((i/4)-1)*4;
+			if(dotLeftCenter<0){
+				dotLeftCenter = i;
+			}
+			dotRightCenter = ((i/4)+1)*4;
+			if(dotRightCenter>dotMax){
+				dotRightCenter = i;
+			}
+			dotLeftBottom = ((i/4)+width-1)*4;
+			if(dotLeftBottom>dotMax){
+				dotLeftBottom = i;
+			}
+			dotCenterBottom = ((i/4)+width)*4;
+			if(dotCenterBottom>dotMax){
+				dotCenterBottom = i;
+			}
+			dotRightBottom = ((i/4)+width+1)*4;
+			if(dotRightBottom>dotMax){
+				dotRightBottom = i;
+			}
+			//console.debug(i+"; dotLeftTop:"+dotLeftTop+"; dotCenterTop:"+dotCenterTop+"; dotRightTop:"+dotRightTop+"; dotLeftCenter:"+dotLeftCenter+"; dotRightCenter:"+dotRightCenter+"; dotLeftBottom:"+dotLeftBottom+"; dotCenterBottom:"+dotCenterBottom+"_dotRightBottom:"+dotRightBottom);
+			/*这是平均模糊的算法*/
+			r = parseInt((oldData[dotLeftTop] + oldData[dotCenterTop] + oldData[dotRightTop] + oldData[dotLeftCenter] + oldData[dotRightCenter] + oldData[dotLeftBottom] + oldData[dotCenterBottom] + oldData[dotRightBottom]+oldData[i])/9);
+			g = parseInt((oldData[dotLeftTop+1] + oldData[dotCenterTop+1] + oldData[dotRightTop+1] + oldData[dotLeftCenter+1] + oldData[dotRightCenter+1] + oldData[dotLeftBottom+1] + oldData[dotCenterBottom+1] + oldData[dotRightBottom+1]+oldData[i+1])/9);
+			b = parseInt((oldData[dotLeftTop+2] + oldData[dotCenterTop+2] + oldData[dotRightTop+2] + oldData[dotLeftCenter+2] + oldData[dotRightCenter+2] + oldData[dotLeftBottom+2] + oldData[dotCenterBottom+2] + oldData[dotRightBottom+2]+oldData[i+2])/9);
+			
+			
+			data[i] = r;
+			data[i + 1] = g;
+			data[i + 2] = b;
+			data[i + 3] = oldData[i+3];
+		}
+		
+		ctx.putImageData(imageData,0,0);
+	}
+	this.filterBlur = _filterBlur;
+	
+	function _gaussianBlur(){
+		var imageData = ctx.getImageData(0, 0, width, height);
+		var data = imageData.data;
+		//var oldData = data.slice();	//复制数组,可是data不是数组,是一个object
+		var oldData = new Array(data.length);
+		for(var i=0; i<data.length; i++){
+			oldData[i] = data[i];
+		}
+		
+		var r,g,b;
+		var dotLeftTop, dotCenterTop, dotRightTop, dotLeftCenter, dotRightCenter, dotLeftBottom, dotCenterBottom, dotRightBottom;
+		var dotMax = data.length-4;
+		for(var i=0; i<data.length; i+=4){
+			//r = data[i];
+			//g = data[i + 1];
+			//b = data[i + 2];
+			//data[i] = data[i + 1] = data[i + 2] = (r+g+b)/3;
+			//取到相邻的点，平均rgba值
+			//取到左上点
+			dotLeftTop = ((i/4)-width-1)*4;
+			if(dotLeftTop<0){
+				dotLeftTop = i;
+			}
+			dotCenterTop = ((i/4)-width)*4;
+			if(dotCenterTop<0){
+				dotCenterTop = i;
+			}
+			dotRightTop = ((i/4)-width+1)*4;
+			if(dotRightTop<0){
+				dotRightTop = i;
+			}
+			
+			dotLeftCenter = ((i/4)-1)*4;
+			if(dotLeftCenter<0){
+				dotLeftCenter = i;
+			}
+			dotRightCenter = ((i/4)+1)*4;
+			if(dotRightCenter>dotMax){
+				dotRightCenter = i;
+			}
+			dotLeftBottom = ((i/4)+width-1)*4;
+			if(dotLeftBottom>dotMax){
+				dotLeftBottom = i;
+			}
+			dotCenterBottom = ((i/4)+width)*4;
+			if(dotCenterBottom>dotMax){
+				dotCenterBottom = i;
+			}
+			dotRightBottom = ((i/4)+width+1)*4;
+			if(dotRightBottom>dotMax){
+				dotRightBottom = i;
+			}
+			//console.debug(i+"; dotLeftTop:"+dotLeftTop+"; dotCenterTop:"+dotCenterTop+"; dotRightTop:"+dotRightTop+"; dotLeftCenter:"+dotLeftCenter+"; dotRightCenter:"+dotRightCenter+"; dotLeftBottom:"+dotLeftBottom+"; dotCenterBottom:"+dotCenterBottom+"_dotRightBottom:"+dotRightBottom);
+			/*这是平均模糊的算法*/
+			/*r = parseInt((data[dotLeftTop] + data[dotCenterTop] + data[dotRightTop] + data[dotLeftCenter] + data[dotRightCenter] + data[dotLeftBottom] + data[dotCenterBottom] + data[dotRightBottom]+data[i])/9);
+			g = parseInt((data[dotLeftTop+1] + data[dotCenterTop+1] + data[dotRightTop+1] + data[dotLeftCenter+1] + data[dotRightCenter+1] + data[dotLeftBottom+1] + data[dotCenterBottom+1] + data[dotRightBottom+1]+data[i+1])/9);
+			b = parseInt((data[dotLeftTop+2] + data[dotCenterTop+2] + data[dotRightTop+2] + data[dotLeftCenter+2] + data[dotRightCenter+2] + data[dotLeftBottom+2] + data[dotCenterBottom+2] + data[dotRightBottom+2]+data[i+2])/9);
+			*/
+			/*这是高斯模糊的算法*/
+			r = parseInt(oldData[dotLeftTop]*0.094 + oldData[dotCenterTop]*0.118 + oldData[dotRightTop]*0.094 + oldData[dotLeftCenter]*0.118 + oldData[dotRightCenter]*0.118 + oldData[dotLeftBottom]*0.094 + oldData[dotCenterBottom]*0.118 + oldData[dotRightBottom]*0.094+oldData[i]*0.14);
+			g = parseInt(oldData[dotLeftTop+1]*0.094 + oldData[dotCenterTop+1]*0.118 + oldData[dotRightTop+1]*0.094 + oldData[dotLeftCenter+1]*0.118 + oldData[dotRightCenter+1]*0.118 + oldData[dotLeftBottom+1]*0.094 + oldData[dotCenterBottom+1]*0.118 + oldData[dotRightBottom+1]*0.094+oldData[i+1]*0.14);
+			b = parseInt(oldData[dotLeftTop+2]*0.094 + oldData[dotCenterTop+2]*0.118 + oldData[dotRightTop+2]*0.094 + oldData[dotLeftCenter+2]*0.118 + oldData[dotRightCenter+2]*0.118 + oldData[dotLeftBottom+2]*0.094 + oldData[dotCenterBottom+2]*0.118 + oldData[dotRightBottom+2]*0.094+oldData[i+2]*0.14);
+			
+			data[i] = r;
+			data[i + 1] = g;
+			data[i + 2] = b;
+			data[i + 3] = data[i+3];
+		}
+		ctx.putImageData(imageData,0,0);
+	}
+	this.gaussianBlur = _gaussianBlur;
+	
+	
+	function _invert(){
+		var imageData = ctx.getImageData(0, 0, width, height);
+		var data = imageData.data;
+		var r,g,b;
+		for(var i=0; i<data.length; i+=4){
+
+			r = 255 - data[i];
+			g = 255 - data[i+1];
+			b = 255 - data[i+2];
+			
+			data[i] = r;
+			data[i + 1] = g;
+			data[i + 2] = b;
+		}
+		ctx.putImageData(imageData,0,0);
+	}
+	this.invert = _invert;
+	
+	function _lightUp(){
+		var imageData = ctx.getImageData(0, 0, width, height);
+		var data = imageData.data;
+		var r,g,b;
+		for(var i=0; i<data.length; i+=4){
+
+			r = data[i] + 20;
+			g = data[i+1] + 20;
+			b = data[i+2] + 20;
+			if(r>255){
+				r = 255;
+			}
+			if(g>255){
+				g = 255;
+			}
+			if(b>255){
+				b = 255;
+			}
+			
+			data[i] = r;
+			data[i + 1] = g;
+			data[i + 2] = b;
+		}
+		ctx.putImageData(imageData,0,0);
+	}
+	this.lightUp = _lightUp;
+	
+	function _lightDown(){
+		var imageData = ctx.getImageData(0, 0, width, height);
+		var data = imageData.data;
+		var r,g,b;
+		for(var i=0; i<data.length; i+=4){
+
+			r = data[i] - 20;
+			g = data[i+1] - 20;
+			b = data[i+2] - 20;
+			if(r<0){
+				r = 0;
+			}
+			if(g<0){
+				g = 0;
+			}
+			if(b<0){
+				b = 0;
+			}
+			
+			data[i] = r;
+			data[i + 1] = g;
+			data[i + 2] = b;
+		}
+		ctx.putImageData(imageData,0,0);
+	}
+	this.lightDown = _lightDown;
+	
+	function _oldStyle(){
+		var imageData = ctx.getImageData(0, 0, width, height);
+		var data = imageData.data;
+		var r,g,b,a, dis;
+		//对比度减弱， 红色加亮; 绿色加亮, 黄色减弱;
+		for(var i=0; i<data.length; i+=4){
+			r = data[i];
+			g = data[i+1];
+			b = data[i+2];
+			
+			a = (r+g+b)/3;
+			
+			dis = r - a;
+			if(r>a){
+				r = r - dis*0.4;
+			}else{
+				r = r - dis*0.4;
+			}
+			
+			dis = g - a;
+			if(g>a){
+				g = g - dis*0.4;
+			}else{
+				g = g - dis*0.4;
+			}
+			
+			dis = b - a;
+			if(b>a){
+				b = b - dis*0.4;
+			}else{
+				b = b - dis*0.4;
+			}
+			
+			if(r<0){
+				r = 0;
+			}else if(r>255){
+				r = 255;
+			}
+			if(g<0){
+				g = 0;
+			}else if(g>255){
+				g = 255;
+			}
+			if(b<0){
+				b = 0;
+			}else if(b>255){
+				b = 255;
+			}
+			
+			r = parseInt(r*1.2);
+			g = parseInt(g*1.1);
+			b = parseInt(b*0.95);
+			
+			//console.debug(data[i]+";"+data[i+1]+";"+data[i+2]+";"+r+";"+g+";"+b);
+			
+			data[i] = r;
+			data[i + 1] = g;
+			data[i + 2] = b;
+		}
+		ctx.putImageData(imageData,0,0);
+	}
+	this.oldStyle = _oldStyle;
+	
+	function _saveToImg(){
+		var img  = new Image();
+		img.src = canvas.toDataURL("image/png");
+		$("#pic").html("").append(img);
+		
+	}
+	this.saveToImg = _saveToImg;
+	
+	init();
+	return this;
+})();
+
+
+
+
+
+
+</script>
+
+</body>
+</html>

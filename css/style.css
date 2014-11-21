@@ -1,0 +1,192 @@
+@charset "utf-8";
+/* CSS Document */
+
+/* CSS 
+
+
+
+*/
+
+/* reset section */
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, figure, footer, header, hgroup, menu, nav, section, menu,
+time, mark, audio, video {
+  margin:0;
+  padding:0;
+  border:0;
+  outline:0;
+  font-size:100%;
+  vertical-align:baseline;
+  background:transparent;
+}                  
+article, aside, figure, footer, header, hgroup, nav, section { display:block; }
+nav ul { list-style:none; }
+blockquote, q { quotes:none; }
+blockquote:before, blockquote:after, q:before, q:after { content:''; content:none; }
+a { margin:0; padding:0; font-size:100%; vertical-align:baseline; background:transparent; }
+ins { background-color:#ff9; color:#000; text-decoration:none; }
+mark { background-color:#ff9; color:#000; font-style:italic; font-weight:bold; }
+del { text-decoration: line-through; }
+abbr[title], dfn[title] { border-bottom:1px dotted #000; cursor:help; }
+table { border-collapse:collapse; border-spacing:0; }
+hr { display:block; height:1px; border:0; border-top:1px solid #ccc; margin:1em 0; padding:0; }
+input, select { vertical-align:middle; }
+
+body { *font-size:small; *font:x-small; line-height:1.22; }
+table { font-size:inherit; font:100%; }
+select, input, textarea { font:99% sans-serif; }
+pre, code, kbd, samp { font-family: monospace, sans-serif; }
+ 
+body, select, input, textarea { color:#444; }
+h1,h2,h3,h4,h5,h6 { font-weight: bold; text-rendering: optimizeLegibility; }
+html { -webkit-font-smoothing: antialiased; }
+a { text-decoration: none; outline: none; border: 0;}
+a:hover, a:active { outline: none; }
+a, a:active, a:visited { color:#607890; }
+a:hover { color:#036; }
+small { font-size:85%; }
+strong, th { font-weight: bold; }
+td, td img { vertical-align:top; } 
+sub { vertical-align: sub; font-size: smaller; }
+sup { vertical-align: super; font-size: smaller; }
+
+pre { padding: 15px; white-space: pre; white-space: pre-wrap; white-space: pre-line; word-wrap: break-word; }
+
+input[type="radio"] { vertical-align: text-bottom; }
+input[type="checkbox"] { vertical-align: bottom; *vertical-align: baseline; }
+.ie6 input { vertical-align: text-bottom; }
+label, input[type=button], input[type=submit], button { cursor: pointer; }
+
+::-moz-selection{ background: #000; color:#fff; text-shadow: none; }
+::selection { background:#000; color:#fff; text-shadow: none; } 
+
+a:link { -webkit-tap-highlight-color: #FF5E99; } 
+
+html { overflow-y: scroll; }
+button {  width: auto; overflow: visible; }
+.ie7 img { -ms-interpolation-mode: bicubic; }
+
+.ir { display:block; text-indent:-999em; overflow:hidden; background-repeat: no-repeat; }
+.hidden { display:none; visibility:hidden; } 
+.visuallyhidden { position:absolute !important; clip: rect(1px 1px 1px 1px); clip: rect(1px, 1px, 1px, 1px); }
+.invisible { visibility: hidden; }
+.clearfix:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
+.clearfix { display: inline-block; }
+* html .clearfix { height: 1%; }
+.clearfix { display: block; }
+/* reset section [END] */
+
+/* -- Basic Styles ----------------------------- */
+body { font: 11px Arial, Helvetica, sans-serif; font-style:normal; min-width: 980px; position: relative;background-color:#FFFFFF;}
+p { margin: 0 0 11px 0;}
+ul { list-style: none; }
+
+#top, #home, #projects, #design, #technik, #lab, #about, #jobs {display: none;}
+#noscript {position: fixed; top: 55px; left: 50%; margin-left: -460px; width: 900px; z-index: 1000000; background: #fff; border: 1px solid #363636; text-align: center; padding: 10px;}
+/* -- Preloader */
+#preloader { width: 245px; height: 300px; text-align: center; margin: 200px auto 0;}
+#loadingbar { width: 245px; height: 245px; text-align: center; color: #fff; background: url(../images/preload_bg.gif) no-repeat 0 245px;}
+#loadingtext { padding: 10px 0 0; font-family:"DINProBold", Arial, sans-serif; font-size: 13px;}
+/* xmas loader */
+/*#loadingtext { padding: 10px 0 0; font-family:"DINProBold", Arial, sans-serif; font-size: 13px; text-indent: -999em; background: url("http://www.ok-studios.de/fileadmin/templates/okstudios/images/preload_xmas_typo.png") no-repeat 0 50%; height: 60px}
+*/
+
+/* -- ProjekteSeite / content_blank */
+body.project_bg { background: #222 url(../images/bg_project_wrap.gif) repeat-x 0 0 fixed;}
+body.project_bg .project-slide {margin: auto;}
+body.project_bg .project-slider-prev {left: 0;}
+body.project_bg .project-slider-next {right: 0;}
+body.project_bg .project-slider-close {display: none;}
+#content_blank .csc-header { width: 250px; margin: 0 auto }
+#content_blank h1, #content_blank h3 {font-family: "DINProBold", Arial ,sans-serif; font-weight: normal;}
+#content_blank a {text-decoration: none; outline: none; border: 0; color: #000;}
+#content_blank a:hover {text-decoration: underline;}
+.tx-felogin-pi1 {width: 250px; margin: 100px auto 20px;}
+fieldset {border: none;}
+
+/* -- Typografics */
+h1 { font-family:"DINProBold", Arial, sans-serif; font-weight:normal; font-style:normal; font-size: 57px; line-height: 43px; text-transform: uppercase; padding: 0 0 10px 0; }
+h2{ font-family: Times, "Times New Roman", serif; font-weight:normal; font-style:italic; font-size: 24px; padding: 6px 0 18px 0; line-height: 24px; }
+/* -- Basic Styles [END] ----------------------------- */
+/* -- Header ----------------------------- */
+#top { width: 100%; position: fixed; left: 0; top: 0; z-index: 5000; }
+#header { background: #fff; background: rgba(255, 255, 255, 0.75); border-radius: 0 0 5px 5px; -moz-border-radius: 0 0 5px 5px; -webkit-border-radius: 0 0 5px 5px; height: 52px; width: 950px; margin: 0 auto; position: relative; font-family:"DINProRegular", Arial, sans-serif; font-size: 13px; xbox-shadow: 0px 0px 2px #bbb;}
+#nav { float: left; padding: 25px 0 0px 20px; height: 20px; margin: 0 auto; font-family:"DINProBold", Arial, sans-serif; font-size: 12px; text-transform: uppercase; }
+#nav li { margin: 0 50px 0 0; float: left; }
+#top li a { color: #8f8f8f; text-decoration: none; padding-bottom: 10px;}
+#top li a:hover { color: #000;}
+#top li.active a, #top li a.active/*, #nav li a:active*/ { color: #000; background: url(../images/bg_nav_active_black.png) no-repeat 0 100%;}
+/*#nav li a:focus { color: #000; }*/
+#ok_contact { /*float: left;*/ position: absolute; right: 5px; z-index: 100; padding: 25px 0 0px 20px; height: 25px; }
+#ok_contact li { float: left; padding-right: 10px; color: #8f8f8f; }
+#meta { /*float: right;*/ position: absolute; right: 5px; z-index: 101; padding: 5px 10px 0 0; text-align: right; height: 20px; font-size: 11px;}
+#meta li a {padding: 0;}
+/* -- Impressum */
+#impressum_wrap { width: 500px; height: 500px; position: fixed; top: 100px; left: 50%; z-index: 500; margin-left: -270px; padding: 25px 5px 20px 20px; background: #fff; box-shadow: 2px 2px 5px 0px #000000; -moz-box-shadow: 2px 2px 5px 0px #000000; -webkit-box-shadow: 2px 2px 5px #000000; }
+#impressum_wrap h1 { font-size: 24px;}
+#impressum_wrap h3 { padding: 0 0 5px 0;}
+#impressum_wrap #content_blank .csc-header {width: auto; margin: 0;}
+#impressum_wrap #impressum_content { height: 500px; overflow-y: scroll; padding-right: 5px;}
+#impressum_wrap .close { position: absolute; top: 8px; right: 6px; color: #9e9c9c; font-size: 14px; font-family: Times, serif; font-weight: normal; font-style: italic; background: url(../images/bg_project-slider_close.png) no-repeat 100% -48px; padding-right: 15px; height: 14px; width: 60px; text-align: right; }
+/* -- Header [END] ----------------------------- */
+/* -- Content-Slides ----------------------------- */
+#home,
+#projects,
+#design,
+#technik,
+#lab,
+#about,
+#jobs,
+#error { position: relative; height: 1000px; margin: 0 auto; padding: 0; overflow: hidden;}
+.sprite { position: absolute; width: 100%; height: 1000px; z-index: 200; top: 0; padding: 0; }
+.screen { position: absolute; width: 100%; height: 1000px; z-index: 201; top: 0; padding: 0; }
+.screen .content { width: 280px; margin-left: 20%; margin-top: 10%; }
+.screen .content h1 { background: url(../images/bg_content_border.png) no-repeat 0 0; padding-top: 35px; }
+.screen .content p { width: 275px; font-size:13px;font-family: "DINProRegular"}
+
+.project-info-text p { width: 275px; font-size:12px !important; font-family: "DINProRegular"}
+/* -- Home -- */
+#home { background:url(../images/home_bg.jpg) 50% 0 no-repeat fixed; color: #363636; }
+#home .sprite { background: url(../images/home_sprite_frei.png) 50% 143px no-repeat fixed; }
+#home .screen { background: url(../images/home_frei.png) 50% 117px no-repeat; }
+#home .screen .content { margin-top: 14%; margin-left: 20%; color: #363636; }
+#home .screen .content p { color: #c5b8ad; }
+#home .screen h1 { font-size: 92px; line-height: 72px;}
+
+/* -- Home XMAS 2012 -- */
+/*#home { background:url(../images/home_xmas_bg.jpg) 50% 0 no-repeat fixed; color: #363636; }
+#home .sprite { background: url(../images/home_xmas_sprite_frei.png) 50% 143px no-repeat fixed; }
+#home .screen { background: url(../images/home_xmas_frei_smaller.png) 100% 117px no-repeat; }
+#home .screen .content { margin-top: 14%; margin-left: 20%; color: #fff; }
+#home .screen .content p { color: #fff; }
+#home .screen h1 { font-size: 92px; line-height: 72px;}
+*/
+
+/* -- Design -- */
+#design { background: #040404 url(../images/design_bg.jpg) 50% 0 no-repeat fixed; color: #666; }
+#design .sprite { background: url(../images/design_sprite_frei.png) 50% 435px no-repeat fixed; }
+#design .screen { background: url(../images/design_frei.png) 50% 28px no-repeat; }
+#design .screen .content { margin-top: 14%; margin-left: 68%; color: #fff; }
+#design .screen .content h1 { background-position: -300px 0; }
+#design .screen .content p { color: #c5b8ad; }
+/* -- Technik -- */
+#technik { background: #fff url(../images/technik_bg.jpg) 50% 0 no-repeat fixed; color: #333; }
+#technik .sprite { background: url(../images/technik_sprite_frei.png) 50% 172px no-repeat fixed; }
+#technik .screen { background: url(../images/technik_frei.png) 50% 50% no-repeat; }
+#technik .screen .content { margin-top: 6%; margin-left: 20%; color: #333; background: url(../images/technik_content.png) 100% 0px no-repeat; width: 330px; padding-top: 100px; }
+#technik .screen .content h1 { background-position: -600px 0; width: 275px; }
+#technik .screen .content p { color: #727c83; width: 235px;  }
+/* -- Lab -- */
+#lab { background: #a8a2a0 url(../images/lab_bg.jpg) 50% 0 no-repeat fixed; color: #666; }
+#lab .sprite { background: url(../images/lab_sprite_frei.png) 50% 211px no-repeat fixed; }
+#lab .screen { background: url(../images/lab_frei.png) 50% 15px no-repeat; }
+#lab .screen .content { margin-top: 14%; margin-left: 68%; color: #fff; }
+#lab .screen .content h1 { background-position: -900px 0; }
+/* #lab .screen .content p { color: #fbff2e; } */
+#lab .screen .content p { color: #e9eb50 !important; }
+
+#lab .screen .content ol { margin: 0 0 11px 20px; list-style-type: lower-latin; color: #fbff2e; }
+/* -- About -- */
