@@ -15,9 +15,9 @@
 #pic img{ display:block;}
 .btns{ position:relative; width:1000px; margin:10px auto;}
 .btns button{ cursor:pointer; margin-bottom: 5px;}
-    
-    
-    
+
+
+
 .btn_com{
 	display:inline-block;
     height: 34px;
@@ -44,16 +44,16 @@
 }
 
 .btn_left{ float:left; width:50%; margin-right:5px;}
-    
-    
+
+
 @media screen and (max-width:600px){
     #canvas{width:100%; margin: 0; box-sizing: border-box;}
     #pic{ width:100%; margin: 0;}
     .btns{width:auto;}
-    
+
 }
-    
-    
+
+
 </style>
 </head>
 
@@ -74,7 +74,7 @@
     <button class="btn_com" type="button" onClick="picFilter.saveToImg()">生成图片文件</button>
 </div>
 <div class="pic" id="pic">
-	
+
 </div>
 
 <script type="text/javascript">
@@ -82,40 +82,44 @@ function imgLeadIn(target){
 	//不能直接使用URL,因为url是假的
 	//var url = target.value;
 	//picFilter.leadInImg(url);
+    console.dir(target);
 	picFilter.leadInImg(target.files);
-	
+
 }
 
 var picFilter = (function(){
 	var canvas, ctx, width, height, originImg, originWidth, originHeight, image;
-	
+
 	function init(){
 		canvas = document.getElementById("canvas");
 		ctx = canvas.getContext("2d");
 		originWidth = width = canvas.width;
 		originHeight = height = canvas.height;
 	}
-	
+
 	function drawImg(img){
 		//调整图片的大小，以适应画布
 		width = originWidth;
 		height = originHeight;
 		var imgDrawWidth, imgDrawHeight;
+        console.dir(img);
 		if(img.width>width){
 			height = width*img.height/img.width;
 			canvas.height = height;
 			canvas.width = width;
 		}else{
+
 			width = img.width;
 			height = img.height;
+            console.log("width,height:"+width,height);
 			canvas.width = width;
 			canvas.height = height;
 		}
 		ctx.clearRect(0, 0, width, height);
 		ctx.drawImage(img,0,0,img.width,img.height,0,0,width,height);
-		
+
 	}
-	
+
 	//图片导入
 	function _leadInImg(files){
 		var reader = new FileReader();
@@ -123,13 +127,14 @@ var picFilter = (function(){
 		reader.onload = function(event){
 			image.src = event.target.result;
 			originImg = event.target.result;
+            console.dir(event.target.result);
 			drawImg(image);
 		}
-		reader.readAsDataURL(files[0]);
-		
+		reader.readAsBinaryString(files[0]);
+
 	}
 	this.leadInImg = _leadInImg;
-	
+
 	function _toBlackWhite(){
 		var imageData = ctx.getImageData(0, 0, width, height);
 		var data = imageData.data;//获取到有imageData并不是存图片data的，而是包含了data，同时还要包含其它描述图片的属性如width,height。
@@ -143,13 +148,13 @@ var picFilter = (function(){
 		ctx.putImageData(imageData,0,0);
 	}
 	this.toBlackWhite = _toBlackWhite;
-	
+
 	function _resetImg(){
 		image.src = originImg;
 		drawImg(image);
 	}
 	this.resetImg = _resetImg;
-	
+
 	function _toBlackWhite(){
 		var imageData = ctx.getImageData(0, 0, width, height);
 		var data = imageData.data;//获取到有imageData并不是存图片data的，而是包含了data，同时还要包含其它描述图片的属性如width,height。
@@ -163,7 +168,7 @@ var picFilter = (function(){
 		ctx.putImageData(imageData,0,0);
 	}
 	this.toBlackWhite = _toBlackWhite;
-	
+
 	function _filterBlur(){
 		var imageData = ctx.getImageData(0, 0, width, height);
 		var data = imageData.data;
@@ -193,7 +198,7 @@ var picFilter = (function(){
 			if(dotRightTop<0){
 				dotRightTop = i;
 			}
-			
+
 			dotLeftCenter = ((i/4)-1)*4;
 			if(dotLeftCenter<0){
 				dotLeftCenter = i;
@@ -219,18 +224,18 @@ var picFilter = (function(){
 			r = parseInt((oldData[dotLeftTop] + oldData[dotCenterTop] + oldData[dotRightTop] + oldData[dotLeftCenter] + oldData[dotRightCenter] + oldData[dotLeftBottom] + oldData[dotCenterBottom] + oldData[dotRightBottom]+oldData[i])/9);
 			g = parseInt((oldData[dotLeftTop+1] + oldData[dotCenterTop+1] + oldData[dotRightTop+1] + oldData[dotLeftCenter+1] + oldData[dotRightCenter+1] + oldData[dotLeftBottom+1] + oldData[dotCenterBottom+1] + oldData[dotRightBottom+1]+oldData[i+1])/9);
 			b = parseInt((oldData[dotLeftTop+2] + oldData[dotCenterTop+2] + oldData[dotRightTop+2] + oldData[dotLeftCenter+2] + oldData[dotRightCenter+2] + oldData[dotLeftBottom+2] + oldData[dotCenterBottom+2] + oldData[dotRightBottom+2]+oldData[i+2])/9);
-			
-			
+
+
 			data[i] = r;
 			data[i + 1] = g;
 			data[i + 2] = b;
 			data[i + 3] = oldData[i+3];
 		}
-		
+
 		ctx.putImageData(imageData,0,0);
 	}
 	this.filterBlur = _filterBlur;
-	
+
 	function _gaussianBlur(){
 		var imageData = ctx.getImageData(0, 0, width, height);
 		var data = imageData.data;
@@ -239,7 +244,7 @@ var picFilter = (function(){
 		for(var i=0; i<data.length; i++){
 			oldData[i] = data[i];
 		}
-		
+
 		var r,g,b;
 		var dotLeftTop, dotCenterTop, dotRightTop, dotLeftCenter, dotRightCenter, dotLeftBottom, dotCenterBottom, dotRightBottom;
 		var dotMax = data.length-4;
@@ -262,7 +267,7 @@ var picFilter = (function(){
 			if(dotRightTop<0){
 				dotRightTop = i;
 			}
-			
+
 			dotLeftCenter = ((i/4)-1)*4;
 			if(dotLeftCenter<0){
 				dotLeftCenter = i;
@@ -293,7 +298,7 @@ var picFilter = (function(){
 			r = parseInt(oldData[dotLeftTop]*0.094 + oldData[dotCenterTop]*0.118 + oldData[dotRightTop]*0.094 + oldData[dotLeftCenter]*0.118 + oldData[dotRightCenter]*0.118 + oldData[dotLeftBottom]*0.094 + oldData[dotCenterBottom]*0.118 + oldData[dotRightBottom]*0.094+oldData[i]*0.14);
 			g = parseInt(oldData[dotLeftTop+1]*0.094 + oldData[dotCenterTop+1]*0.118 + oldData[dotRightTop+1]*0.094 + oldData[dotLeftCenter+1]*0.118 + oldData[dotRightCenter+1]*0.118 + oldData[dotLeftBottom+1]*0.094 + oldData[dotCenterBottom+1]*0.118 + oldData[dotRightBottom+1]*0.094+oldData[i+1]*0.14);
 			b = parseInt(oldData[dotLeftTop+2]*0.094 + oldData[dotCenterTop+2]*0.118 + oldData[dotRightTop+2]*0.094 + oldData[dotLeftCenter+2]*0.118 + oldData[dotRightCenter+2]*0.118 + oldData[dotLeftBottom+2]*0.094 + oldData[dotCenterBottom+2]*0.118 + oldData[dotRightBottom+2]*0.094+oldData[i+2]*0.14);
-			
+
 			data[i] = r;
 			data[i + 1] = g;
 			data[i + 2] = b;
@@ -302,8 +307,8 @@ var picFilter = (function(){
 		ctx.putImageData(imageData,0,0);
 	}
 	this.gaussianBlur = _gaussianBlur;
-	
-	
+
+
 	function _invert(){
 		var imageData = ctx.getImageData(0, 0, width, height);
 		var data = imageData.data;
@@ -313,7 +318,7 @@ var picFilter = (function(){
 			r = 255 - data[i];
 			g = 255 - data[i+1];
 			b = 255 - data[i+2];
-			
+
 			data[i] = r;
 			data[i + 1] = g;
 			data[i + 2] = b;
@@ -321,7 +326,7 @@ var picFilter = (function(){
 		ctx.putImageData(imageData,0,0);
 	}
 	this.invert = _invert;
-	
+
 	function _lightUp(){
 		var imageData = ctx.getImageData(0, 0, width, height);
 		var data = imageData.data;
@@ -340,7 +345,7 @@ var picFilter = (function(){
 			if(b>255){
 				b = 255;
 			}
-			
+
 			data[i] = r;
 			data[i + 1] = g;
 			data[i + 2] = b;
@@ -348,7 +353,7 @@ var picFilter = (function(){
 		ctx.putImageData(imageData,0,0);
 	}
 	this.lightUp = _lightUp;
-	
+
 	function _lightDown(){
 		var imageData = ctx.getImageData(0, 0, width, height);
 		var data = imageData.data;
@@ -367,7 +372,7 @@ var picFilter = (function(){
 			if(b<0){
 				b = 0;
 			}
-			
+
 			data[i] = r;
 			data[i + 1] = g;
 			data[i + 2] = b;
@@ -375,7 +380,7 @@ var picFilter = (function(){
 		ctx.putImageData(imageData,0,0);
 	}
 	this.lightDown = _lightDown;
-	
+
 	function _oldStyle(){
 		var imageData = ctx.getImageData(0, 0, width, height);
 		var data = imageData.data;
@@ -385,30 +390,30 @@ var picFilter = (function(){
 			r = data[i];
 			g = data[i+1];
 			b = data[i+2];
-			
+
 			a = (r+g+b)/3;
-			
+
 			dis = r - a;
 			if(r>a){
 				r = r - dis*0.4;
 			}else{
 				r = r - dis*0.4;
 			}
-			
+
 			dis = g - a;
 			if(g>a){
 				g = g - dis*0.4;
 			}else{
 				g = g - dis*0.4;
 			}
-			
+
 			dis = b - a;
 			if(b>a){
 				b = b - dis*0.4;
 			}else{
 				b = b - dis*0.4;
 			}
-			
+
 			if(r<0){
 				r = 0;
 			}else if(r>255){
@@ -424,13 +429,13 @@ var picFilter = (function(){
 			}else if(b>255){
 				b = 255;
 			}
-			
+
 			r = parseInt(r*1.2);
 			g = parseInt(g*1.1);
 			b = parseInt(b*0.95);
-			
+
 			//console.debug(data[i]+";"+data[i+1]+";"+data[i+2]+";"+r+";"+g+";"+b);
-			
+
 			data[i] = r;
 			data[i + 1] = g;
 			data[i + 2] = b;
@@ -438,15 +443,15 @@ var picFilter = (function(){
 		ctx.putImageData(imageData,0,0);
 	}
 	this.oldStyle = _oldStyle;
-	
+
 	function _saveToImg(){
 		var img  = new Image();
 		img.src = canvas.toDataURL("image/png");
 		$("#pic").html("").append(img);
-		
+
 	}
 	this.saveToImg = _saveToImg;
-	
+
 	init();
 	return this;
 })();
